@@ -1,6 +1,6 @@
 ####Setup####
 # Install packages
-pacman::p_load(polite, rvest, demeter, tidyr)
+pacman::p_load(polite, rvest, demeter, tidyr, purrr, dplyr)
 
 #Function for scraping madb.europa.eu 
 mad_scraper<-function(session,country,hscode){
@@ -34,7 +34,17 @@ session<-polite::bow(host)
 mad_scraper(session = session, country = "GB", hscode = "010410")
 
 
+# for mutltiple countries
 
+countries<-list("EG","GB")
+output<-list()
+for (i in seq_along(countries)) {
+  output[[i]]<-(mad_scraper(session = session, country = countries[i], hscode = "01"))
+  
+}
+
+
+map2_df(output, countries, ~mutate(.x,Code = as.character(Code),country = .y ))
 
 
 
